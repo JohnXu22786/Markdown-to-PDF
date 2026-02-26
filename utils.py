@@ -146,7 +146,7 @@ def convert_markdown_to_pdf(
         _register_process(key, process)
 
         try:
-            stdout, stderr = process.communicate(timeout=60)
+            stdout, stderr = process.communicate()
 
             if process.returncode != 0:
                 error_msg = f"Pandoc failed with return code {process.returncode}: {stderr}"
@@ -155,13 +155,6 @@ def convert_markdown_to_pdf(
 
             return True, "Conversion successful"
 
-        except subprocess.TimeoutExpired:
-            # Timeout - kill the process
-            process.kill()
-            process.wait()
-            error_msg = "Pandoc conversion timed out after 60 seconds"
-            logger.error(error_msg)
-            return False, error_msg
 
         except Exception as e:
             # Other errors - ensure process is terminated
