@@ -17,6 +17,7 @@ class MarkdownToPDFConverter {
         this.removeFileBtn = document.getElementById('remove-file');
         this.markdownText = document.getElementById('markdown-text');
         this.pasteTextBtn = document.getElementById('paste-text');
+        this.addDividerBtn = document.getElementById('add-divider');
         this.clearTextBtn = document.getElementById('clear-text');
         this.sampleTextBtn = document.getElementById('sample-text');
         this.charCount = document.getElementById('char-count');
@@ -210,6 +211,11 @@ class MarkdownToPDFConverter {
             await this.pasteText();
         });
 
+        // Add divider button
+        this.addDividerBtn.addEventListener('click', () => {
+            this.addDivider();
+        });
+
         // Clear text button
         this.clearTextBtn.addEventListener('click', () => {
             this.markdownText.value = '';
@@ -305,6 +311,86 @@ $$
             console.error('Failed to paste from clipboard:', error);
             alert('Unable to paste from clipboard. Please ensure you have granted clipboard permissions.');
         }
+    }
+
+    addDivider() {
+        // Insert Markdown divider at cursor position with empty line spacing
+        const textarea = this.markdownText;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+
+        // Check if we're at the beginning of the text
+        const isAtBeginning = start === 0;
+        const isAtEnd = end === textarea.value.length;
+
+        // Analyze text before cursor to determine needed spacing
+        let spacingBefore = '';
+        if (!isAtBeginning) {
+            // Count newlines at the end of 'before' text
+            let newlineCount = 0;
+            for (let i = before.length - 1; i >= 0; i--) {
+                if (before.charAt(i) === '\n') {
+                    newlineCount++;
+                } else {
+                    break;
+                }
+            }
+
+            // Ensure at least two newlines before the divider (empty line)
+            if (newlineCount === 0) {
+                spacingBefore = '\n\n';
+            } else if (newlineCount === 1) {
+                spacingBefore = '\n';
+            }
+            // If newlineCount >= 2, we already have empty line spacing
+        } else {
+            // At beginning of text, no spacing needed before
+            spacingBefore = '';
+        }
+
+        // Analyze text after cursor to determine needed spacing
+        let spacingAfter = '';
+        if (!isAtEnd) {
+            // Count newlines at the beginning of 'after' text
+            let newlineCount = 0;
+            for (let i = 0; i < after.length; i++) {
+                if (after.charAt(i) === '\n') {
+                    newlineCount++;
+                } else {
+                    break;
+                }
+            }
+
+            // Ensure at least two newlines after the divider (empty line)
+            if (newlineCount === 0) {
+                spacingAfter = '\n\n';
+            } else if (newlineCount === 1) {
+                spacingAfter = '\n';
+            }
+            // If newlineCount >= 2, we already have empty line spacing
+        } else {
+            // At end of text, add spacing after
+            spacingAfter = '\n\n';
+        }
+
+        // Markdown divider with proper spacing
+        const divider = spacingBefore + '---' + spacingAfter;
+
+        // Replace selection or insert at cursor
+        textarea.value = before + divider + after;
+
+        // Move cursor to end of inserted divider (before the final spacing)
+        const newCursorPos = start + divider.length - spacingAfter.length;
+        textarea.selectionStart = newCursorPos;
+        textarea.selectionEnd = newCursorPos;
+
+        // Update stats
+        this.updateTextStats();
+
+        // Focus the textarea
+        textarea.focus();
     }
 
     setupConfiguration() {
