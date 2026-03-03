@@ -424,6 +424,11 @@ body {
     color: var(--text-on-primary);
 }
 
+.btn-info {
+    background: var(--color-info);
+    color: var(--text-on-primary);
+}
+
 .btn-error {
     background: var(--color-error);
     color: var(--text-on-primary);
