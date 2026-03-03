@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint, render_template, request, jsonify, send_file, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from config import Config
-from utils import allowed_file, convert_markdown_to_pdf, convert_markdown_text_to_pdf, cancel_conversion
+from utils import allowed_file, convert_markdown_to_pdf, convert_markdown_text_to_pdf, cancel_conversion, open_file_with_default_app
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -195,6 +195,22 @@ def download_file(filename):
         return jsonify({'error': 'File not found'}), 404
 
     return send_file(file_path, as_attachment=True, download_name=filename)
+
+
+@main.route('/open/<filename>')
+def open_file(filename):
+    """Open converted PDF file with default application."""
+    ensure_directories()
+    file_path = os.path.join(Config.OUTPUT_FOLDER, filename)
+
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'File not found'}), 404
+
+    success, message = open_file_with_default_app(file_path)
+    if success:
+        return jsonify({'success': True, 'message': message})
+    else:
+        return jsonify({'error': message}), 500
 
 
 @main.route('/api/config-presets')

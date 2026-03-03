@@ -1,4 +1,5 @@
 import os
+import platform
 import subprocess
 import tempfile
 import shutil
@@ -209,5 +210,39 @@ def convert_markdown_text_to_pdf(
 
     except Exception as e:
         error_msg = f"Error in text conversion: {str(e)}"
+        logger.error(error_msg)
+        return False, error_msg
+
+
+def open_file_with_default_app(file_path: str) -> Tuple[bool, str]:
+    """
+    Open a file with the default application for the current platform.
+
+    Returns (success, message).
+    """
+    try:
+        if not os.path.exists(file_path):
+            return False, f"File not found: {file_path}"
+
+        platform_name = platform.system().lower()
+
+        if platform_name == 'windows':
+            os.startfile(file_path)
+            return True, f"Opened {file_path} with default application"
+        elif platform_name == 'darwin':  # macOS
+            subprocess.Popen(['open', file_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True, f"Opened {file_path} with default application"
+        elif platform_name == 'linux':
+            subprocess.Popen(['xdg-open', file_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True, f"Opened {file_path} with default application"
+        else:
+            return False, f"Unsupported platform: {platform_name}"
+
+    except FileNotFoundError:
+        error_msg = f"Command not found. Please ensure 'open' (macOS) or 'xdg-open' (Linux) is installed."
+        logger.error(error_msg)
+        return False, error_msg
+    except Exception as e:
+        error_msg = f"Error opening file: {str(e)}"
         logger.error(error_msg)
         return False, error_msg

@@ -28,6 +28,7 @@ class MarkdownToPDFConverter {
         this.resultArea = document.getElementById('result-area');
         this.errorArea = document.getElementById('error-area');
         this.downloadLink = document.getElementById('download-link');
+        this.openLink = document.getElementById('open-link');
         this.newConversionBtn = document.getElementById('new-conversion');
         this.dismissErrorBtn = document.getElementById('dismiss-error');
         this.loadingOverlay = document.getElementById('loading-overlay');
@@ -60,6 +61,7 @@ class MarkdownToPDFConverter {
         this.currentPreset = null;
         this.abortController = null;
         this.currentRequestId = null;
+        this.currentOutputFilename = null;
 
         this.init();
     }
@@ -526,6 +528,11 @@ $$
             this.resetConversion();
         });
 
+        // Open file button
+        this.openLink.addEventListener('click', () => {
+            this.openFile();
+        });
+
         // Dismiss error button
         this.dismissErrorBtn.addEventListener('click', () => {
             this.hideError();
@@ -651,6 +658,35 @@ $$
         this.downloadLink.href = downloadUrl;
         this.resultArea.classList.remove('hidden');
         this.errorArea.classList.add('hidden');
+
+        // Extract filename from download URL for open functionality
+        // URL format: /download/filename.pdf
+        const parts = downloadUrl.split('/');
+        this.currentOutputFilename = parts[parts.length - 1];
+    }
+
+    async openFile() {
+        if (!this.currentOutputFilename) {
+            this.showError('No PDF file available to open.');
+            return;
+        }
+
+        try {
+            // Send request to open file with default application
+            const response = await fetch(`/open/${this.currentOutputFilename}`);
+            const result = await response.json();
+
+            if (result.success) {
+                // Show success message but keep result area visible
+                // Could show a temporary notification, but for now just log
+                console.log('Open request successful:', result.message);
+            } else {
+                this.showError(`Failed to open file: ${result.error || result.message}`);
+            }
+        } catch (error) {
+            console.error('Open request failed:', error);
+            this.showError('Network error while trying to open file.');
+        }
     }
 
     showError(message) {
@@ -670,6 +706,7 @@ $$
         this.updateTextStats();
         this.resetConfiguration();
         this.switchTab('file-tab');
+        this.currentOutputFilename = null;
     }
 
     async cancelConversion() {
