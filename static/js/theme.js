@@ -1,6 +1,7 @@
 /**
  * Theme management for Markdown to PDF Converter
- * Supports system preference detection and manual toggle
+ * Follows system theme by default, allows manual override during session
+ * Manual changes are not persisted across page reloads
  */
 
 class ThemeManager {
@@ -14,7 +15,7 @@ class ThemeManager {
     }
 
     init() {
-        // Set initial theme based on localStorage or system preference
+        // Set initial theme based on system preference
         this.setInitialTheme();
 
         // Add event listener for toggle button
@@ -27,15 +28,8 @@ class ThemeManager {
     }
 
     setInitialTheme() {
-        const storedTheme = localStorage.getItem('theme');
-
-        if (storedTheme) {
-            // Use stored theme
-            this.setTheme(storedTheme);
-        } else {
-            // Use system preference
-            this.setTheme(this.getSystemTheme());
-        }
+        // Always use system preference on page load
+        this.setTheme(this.getSystemTheme());
     }
 
     getSystemTheme() {
@@ -48,9 +42,6 @@ class ThemeManager {
 
         // Update icon visibility
         this.updateIcons(theme);
-
-        // Store preference
-        localStorage.setItem('theme', theme);
 
         // Dispatch custom event for other components
         window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
@@ -80,17 +71,14 @@ class ThemeManager {
         // Use modern addEventListener if available
         if (mediaQuery.addEventListener) {
             mediaQuery.addEventListener('change', (e) => {
-                // Only follow system preference if no manual override
-                if (!localStorage.getItem('theme')) {
-                    this.setTheme(e.matches ? 'dark' : 'light');
-                }
+                // Always follow system theme changes
+                this.setTheme(e.matches ? 'dark' : 'light');
             });
         } else {
             // Fallback for older browsers
             mediaQuery.addListener((e) => {
-                if (!localStorage.getItem('theme')) {
-                    this.setTheme(e.matches ? 'dark' : 'light');
-                }
+                // Always follow system theme changes
+                this.setTheme(e.matches ? 'dark' : 'light');
             });
         }
     }
