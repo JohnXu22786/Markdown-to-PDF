@@ -381,8 +381,8 @@ $$
         // Replace selection or insert at cursor
         textarea.value = before + divider + after;
 
-        // Move cursor to end of inserted divider (before the final spacing)
-        const newCursorPos = start + divider.length - spacingAfter.length;
+        // Move cursor to end of inserted divider (after the final spacing)
+        const newCursorPos = start + divider.length;
         textarea.selectionStart = newCursorPos;
         textarea.selectionEnd = newCursorPos;
 
