@@ -391,6 +391,8 @@ body {
     align-items: center;
     gap: var(--spacing-sm);
     font-size: 0.95rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .btn-sm {
@@ -742,4 +744,104 @@ body {
         border-radius: 0 0 var(--border-radius) var(--border-radius);
         border-top: 1px solid var(--border-color);
     }
+}
+
+/* Scrollbar Styles */
+:root {
+    --scrollbar-track: #f1f1f1;
+    --scrollbar-thumb: #c1c1c1;
+    --scrollbar-thumb-hover: #a8a8a8;
+}
+
+[data-theme="dark"] {
+    --scrollbar-track: #2d2d2d;
+    --scrollbar-thumb: #555555;
+    --scrollbar-thumb-hover: #6c757d;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 6px;
+    border: 3px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Textarea specific scrollbar */
+#markdown-text::-webkit-scrollbar {
+    width: 10px;
+}
+
+#markdown-text::-webkit-scrollbar-track {
+    background: var(--bg-input);
+    border-radius: 5px;
+}
+
+#markdown-text::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+    border: 2px solid var(--bg-input);
+}
+
+#markdown-text::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Ensure form inputs have correct colors in dark theme */
+.form-input,
+.form-select,
+#linestretch,
+#geometry,
+#mainfont,
+#cjk-mainfont,
+#cjk-sansfont,
+#cjk-monofont {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Ensure textarea has correct colors */
+#markdown-text {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Ensure buttons in text input header have correct colors */
+.text-actions .btn,
+#paste-text,
+#add-divider,
+#clear-text,
+#sample-text {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Ensure header buttons have correct colors */
+.btn-icon,
+#theme-toggle,
+.header-actions .btn-icon {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+    border-color: var(--border-color) !important;
 }
