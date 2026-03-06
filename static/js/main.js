@@ -29,7 +29,6 @@ class MarkdownToPDFConverter {
         this.errorArea = document.getElementById('error-area');
         this.downloadLink = document.getElementById('download-link');
         this.openLink = document.getElementById('open-link');
-        this.newConversionBtn = document.getElementById('new-conversion');
         this.dismissErrorBtn = document.getElementById('dismiss-error');
         this.loadingOverlay = document.getElementById('loading-overlay');
         this.cancelConversionBtn = document.getElementById('cancel-conversion');
@@ -523,10 +522,6 @@ $$
             this.convert();
         });
 
-        // New conversion button
-        this.newConversionBtn.addEventListener('click', () => {
-            this.resetConversion();
-        });
 
         // Open file button
         this.openLink.addEventListener('click', () => {
