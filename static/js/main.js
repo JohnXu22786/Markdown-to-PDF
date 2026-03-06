@@ -2,70 +2,145 @@
  * Main application logic for Markdown to PDF Converter
  * Handles file upload, text input, configuration, and API calls
  */
+console.log('main.js loading');
+window.addEventListener('error', function(e) {
+    console.error('Global error caught:', e.error);
+});
 
 class MarkdownToPDFConverter {
     constructor() {
-        // DOM Elements
-        this.tabs = document.querySelectorAll('.tab');
-        this.tabContents = document.querySelectorAll('.tab-content');
-        this.fileInput = document.getElementById('file-input');
-        this.browseBtn = document.getElementById('browse-btn');
-        this.dropArea = document.getElementById('drop-area');
-        this.filePreview = document.getElementById('file-preview');
-        this.fileName = document.getElementById('file-name');
-        this.fileSize = document.getElementById('file-size');
-        this.removeFileBtn = document.getElementById('remove-file');
-        this.markdownText = document.getElementById('markdown-text');
-        this.pasteTextBtn = document.getElementById('paste-text');
-        this.addDividerBtn = document.getElementById('add-divider');
-        this.clearTextBtn = document.getElementById('clear-text');
-        this.sampleTextBtn = document.getElementById('sample-text');
-        this.charCount = document.getElementById('char-count');
-        this.lineCount = document.getElementById('line-count');
-        this.convertBtn = document.getElementById('convert-btn');
-        this.resetConfigBtn = document.getElementById('reset-config');
-        this.presetsSelect = document.getElementById('presets');
-        this.resultArea = document.getElementById('result-area');
-        this.errorArea = document.getElementById('error-area');
-        this.downloadLink = document.getElementById('download-link');
-        this.openLink = document.getElementById('open-link');
-        this.dismissErrorBtn = document.getElementById('dismiss-error');
-        this.loadingOverlay = document.getElementById('loading-overlay');
-        this.cancelConversionBtn = document.getElementById('cancel-conversion');
+        try {
+            // DOM Elements
+            this.tabs = document.querySelectorAll('.tab');
+            this.tabContents = document.querySelectorAll('.tab-content');
+            this.fileInput = document.getElementById('file-input');
+            this.browseBtn = document.getElementById('browse-btn');
+            this.dropArea = document.getElementById('drop-area');
+            this.filePreview = document.getElementById('file-preview');
+            this.fileName = document.getElementById('file-name');
+            this.fileSize = document.getElementById('file-size');
+            this.removeFileBtn = document.getElementById('remove-file');
+            this.markdownText = document.getElementById('markdown-text');
+            this.pasteTextBtn = document.getElementById('paste-text');
+            this.addDividerBtn = document.getElementById('add-divider');
+            this.clearTextBtn = document.getElementById('clear-text');
+            this.sampleTextBtn = document.getElementById('sample-text');
+            this.combinedStats = document.getElementById('combined-stats');
+            this.convertBtn = document.getElementById('convert-btn');
+            this.resetConfigBtn = document.getElementById('reset-config');
+            this.presetsSelect = document.getElementById('presets');
+            this.resultArea = document.getElementById('result-area');
+            this.errorArea = document.getElementById('error-area');
+            this.downloadLink = document.getElementById('download-link');
+            this.openLink = document.getElementById('open-link');
+            this.dismissErrorBtn = document.getElementById('dismiss-error');
+            this.loadingOverlay = document.getElementById('loading-overlay');
+            this.cancelConversionBtn = document.getElementById('cancel-conversion');
 
-        // Configuration inputs
-        this.configInputs = {
-            pdfEngine: document.getElementById('pdf-engine'),
-            documentClass: document.getElementById('document-class'),
-            geometry: document.getElementById('geometry'),
-            fontsize: document.getElementById('fontsize'),
-            mainfont: document.getElementById('mainfont'),
-            linestretch: document.getElementById('linestretch'),
-            colorlinks: document.getElementById('colorlinks'),
-            numberSections: document.getElementById('number-sections'),
-            toc: document.getElementById('toc'),
-            languageZh: document.getElementById('language-zh'),
-            languageJa: document.getElementById('language-ja'),
-            languageKo: document.getElementById('language-ko'),
-            cjkMainfont: document.getElementById('cjk-mainfont'),
-            cjkSansfont: document.getElementById('cjk-sansfont'),
-            cjkMonofont: document.getElementById('cjk-monofont')
-        };
+            // Configuration inputs
+            this.configInputs = {
+                pdfEngine: document.getElementById('pdf-engine'),
+                documentClass: document.getElementById('document-class'),
+                geometry: document.getElementById('geometry'),
+                fontsize: document.getElementById('fontsize'),
+                mainfont: document.getElementById('mainfont'),
+                linestretch: document.getElementById('linestretch'),
+                colorlinks: document.getElementById('colorlinks'),
+                numberSections: document.getElementById('number-sections'),
+                toc: document.getElementById('toc'),
+                languageZh: document.getElementById('language-zh'),
+                languageJa: document.getElementById('language-ja'),
+                languageKo: document.getElementById('language-ko'),
+                cjkMainfont: document.getElementById('cjk-mainfont'),
+                cjkSansfont: document.getElementById('cjk-sansfont'),
+                cjkMonofont: document.getElementById('cjk-monofont')
+            };
 
-        // Additional DOM elements
-        this.cjkFontsGroup = document.getElementById('cjk-fonts-group');
+            // Additional DOM elements
+            this.cjkFontsGroup = document.getElementById('cjk-fonts-group');
 
-        // State
-        this.currentFile = null;
-        this.currentPreset = null;
-        this.abortController = null;
-        this.currentRequestId = null;
-        this.currentOutputFilename = null;
+            // Modal elements
+            this.openModalStatsBtn = document.getElementById('open-modal-stats');
+            this.openModalActionBtn = document.getElementById('open-modal-action');
+            this.modal = document.getElementById('config-modal');
+            this.closeModalBtn = document.getElementById('close-modal');
+            this.cancelModalBtn = document.getElementById('cancel-modal');
+            this.saveModalBtn = document.getElementById('save-modal');
+            this.resetAllModalBtn = document.getElementById('reset-all-modal');
+            this.modalTitle = document.getElementById('modal-title');
 
-        this.init();
+            // Modal state
+            this.previousFocusElement = null;
+            this.debouncedUpdateTextStats = MarkdownToPDFConverter.debounce(() => this.updateTextStats(), 300);
+
+            // State
+            this.currentFile = null;
+            this.currentPreset = null;
+            this.abortController = null;
+            this.currentRequestId = null;
+            this.currentOutputFilename = null;
+
+            console.log('MarkdownToPDFConverter constructor called');
+            this.init();
+        } catch (error) {
+            console.error('Error in MarkdownToPDFConverter constructor:', error);
+        }
     }
 
+    // Static debounce utility
+    static debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Hardcoded presets for modal
+    static PRESETS = {
+        academic: {
+            'document-class': 'article',
+            'fontsize': '12pt',
+            'geometry': 'margin=1in',
+            'linestretch': '1.25',
+            'colorlinks': false,
+            'number-sections': true,
+            'toc': true
+        },
+        simple: {
+            'document-class': 'article',
+            'fontsize': '12pt',
+            'geometry': 'margin=0.75in',
+            'colorlinks': true,
+            'number-sections': false,
+            'toc': false
+        },
+        book: {
+            'document-class': 'book',
+            'fontsize': '11pt',
+            'geometry': 'margin=1.5in,headheight=15pt',
+            'linestretch': '1.15',
+            'colorlinks': true,
+            'number-sections': true,
+            'toc': true
+        },
+        chinese: {
+            'language': 'zh'
+        },
+        japanese: {
+            'language': 'ja'
+        },
+        korean: {
+            'language': 'ko'
+        }
+    };
+
     init() {
+        console.log('MarkdownToPDFConverter init() called');
         // Tab switching
         this.setupTabs();
 
@@ -80,6 +155,9 @@ class MarkdownToPDFConverter {
 
         // Language handling
         this.setupLanguageHandling();
+
+        // Modal handling
+        this.setupModal();
 
         // Event listeners for buttons
         this.setupEventListeners();
@@ -202,10 +280,8 @@ class MarkdownToPDFConverter {
     }
 
     setupTextInput() {
-        // Text area input
-        this.markdownText.addEventListener('input', () => {
-            this.updateTextStats();
-        });
+        // Text area input with debounced update
+        this.markdownText.addEventListener('input', this.debouncedUpdateTextStats);
 
         // Paste text button
         this.pasteTextBtn.addEventListener('click', async () => {
@@ -234,8 +310,7 @@ class MarkdownToPDFConverter {
         const chars = text.length;
         const lines = text.split('\n').length;
 
-        this.charCount.textContent = `${chars.toLocaleString()} characters`;
-        this.lineCount.textContent = `${lines.toLocaleString()} lines`;
+        this.combinedStats.textContent = `${chars.toLocaleString()} characters, ${lines.toLocaleString()} lines`;
     }
 
     loadSampleText() {
@@ -410,10 +485,12 @@ $$
             }
         });
 
-        // Reset configuration
-        this.resetConfigBtn.addEventListener('click', () => {
-            this.resetConfiguration();
-        });
+        // Reset configuration (only if button exists)
+        if (this.resetConfigBtn) {
+            this.resetConfigBtn.addEventListener('click', () => {
+                this.resetConfiguration();
+            });
+        }
     }
 
     setupLanguageHandling() {
@@ -440,6 +517,159 @@ $$
         this.cjkFontsGroup.style.display = anyChecked ? 'block' : 'none';
     }
 
+    setupModal() {
+        try {
+            console.log('Setting up modal...');
+            console.log('openModalStatsBtn:', this.openModalStatsBtn);
+            console.log('openModalActionBtn:', this.openModalActionBtn);
+            console.log('modal:', this.modal);
+            console.log('closeModalBtn:', this.closeModalBtn);
+            console.log('cancelModalBtn:', this.cancelModalBtn);
+            console.log('saveModalBtn:', this.saveModalBtn);
+            console.log('resetAllModalBtn:', this.resetAllModalBtn);
+
+            // Check for required elements
+            if (!this.openModalStatsBtn || !this.openModalActionBtn || !this.modal) {
+                console.error('Modal setup failed: missing required DOM elements');
+                // Show visible error
+                this.showVisibleError('Modal setup failed: missing required DOM elements. Check browser console.');
+                return;
+            }
+
+            // Check for modal control elements
+            if (!this.closeModalBtn) {
+                console.warn('closeModalBtn not found');
+            }
+            if (!this.cancelModalBtn) {
+                console.warn('cancelModalBtn not found');
+            }
+            if (!this.saveModalBtn) {
+                console.warn('saveModalBtn not found');
+            }
+            if (!this.resetAllModalBtn) {
+                console.warn('resetAllModalBtn not found');
+            }
+
+        // Track previously focused element for accessibility
+        this.previousFocusElement = null;
+
+        // Open modal from both buttons
+        const openModal = () => {
+            console.log('Opening modal, closeModalBtn:', this.closeModalBtn);
+            console.log('Modal classList before:', this.modal.classList);
+            alert('Modal opened - debugging'); // Temporary debug
+            this.modal.classList.remove('hidden');
+            console.log('Modal classList after:', this.modal.classList);
+            this.modal.setAttribute('aria-hidden', 'false');
+            this.previousFocusElement = document.activeElement;
+            if (this.closeModalBtn) {
+                this.closeModalBtn.focus();
+                console.log('Focused close button');
+            } else {
+                console.error('Cannot focus closeModalBtn: element not found');
+            }
+            // Additional debug: check computed display style
+            const display = window.getComputedStyle(this.modal).display;
+            console.log('Modal computed display:', display);
+        };
+
+        // Safe event listener helper
+        const safeAddEventListener = (element, event, handler) => {
+            if (element) {
+                console.log(`Adding ${event} listener to`, element.id || element);
+                element.addEventListener(event, handler);
+            } else {
+                console.warn(`Cannot add ${event} listener to missing element`);
+            }
+        };
+
+        safeAddEventListener(this.openModalStatsBtn, 'click', openModal);
+        safeAddEventListener(this.openModalActionBtn, 'click', openModal);
+
+        // Close modal
+        const closeModal = () => {
+            this.modal.classList.add('hidden');
+            this.modal.setAttribute('aria-hidden', 'true');
+            if (this.previousFocusElement) {
+                this.previousFocusElement.focus();
+            }
+        };
+
+        safeAddEventListener(this.closeModalBtn, 'click', closeModal);
+        safeAddEventListener(this.cancelModalBtn, 'click', closeModal);
+
+        // Save modal (just close for now, configuration is already saved to state)
+        safeAddEventListener(this.saveModalBtn, 'click', () => {
+            closeModal();
+            // Optional: Show confirmation or update UI
+        });
+
+        // Close modal when clicking outside
+        safeAddEventListener(this.modal, 'click', (e) => {
+            if (e.target === this.modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // Language support - show CJK fonts when any CJK language is selected
+        // This is already handled by setupLanguageHandling(), but we need to ensure
+        // the event delegation works for modal checkboxes
+        const languageCheckboxes = document.querySelectorAll('input[name="language"]');
+        const modalBody = document.querySelector('.modal-body');
+
+        // Event delegation for language checkboxes in modal
+        if (modalBody) {
+            modalBody.addEventListener('change', (e) => {
+                if (e.target.matches('input[name="language"]')) {
+                    const anyChecked = Array.from(languageCheckboxes).some(cb => cb.checked);
+                    this.cjkFontsGroup.style.display = anyChecked ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Preset selection - handled by setupConfiguration() via this.presetsSelect
+
+        // Reset all button in modal
+        safeAddEventListener(this.resetAllModalBtn, 'click', () => {
+            // Reset text area
+            this.markdownText.value = '';
+            this.updateTextStats();
+
+            // Reset modal settings
+            this.presetsSelect.value = '';
+            this.configInputs.pdfEngine.value = 'xelatex';
+            this.configInputs.documentClass.value = 'article';
+            this.configInputs.geometry.value = 'margin=1in';
+            this.configInputs.linestretch.value = '';
+            this.configInputs.mainfont.value = '';
+            this.configInputs.fontsize.value = '12pt';
+            this.configInputs.colorlinks.checked = true;
+            this.configInputs.numberSections.checked = false;
+            this.configInputs.toc.checked = false;
+
+            // Reset language checkboxes
+            languageCheckboxes.forEach(cb => cb.checked = false);
+            this.cjkFontsGroup.style.display = 'none';
+
+            // Optional: Show confirmation
+            console.log('All settings reset');
+        });
+
+        console.log('Modal setup complete');
+        // Show temporary success message
+        this.showVisibleSuccess('Modal system ready. Click "Configuration Options" to open modal.');
+        } catch (error) {
+            console.error('Error in setupModal:', error);
+        }
+    }
+
     async loadPresets() {
         try {
             const response = await fetch('/api/config-presets');
@@ -453,39 +683,90 @@ $$
     }
 
     applyPreset(presetId) {
-        if (!this.presets || !this.presets[presetId]) {
-            console.warn(`Preset ${presetId} not found`);
+        // Check API presets first
+        if (this.presets && this.presets[presetId]) {
+            const preset = this.presets[presetId];
+            this.currentPreset = presetId;
+            this.presetsSelect.value = presetId;
+
+            // Update form inputs
+            this.configInputs.pdfEngine.value = preset.pdf_engine;
+            this.configInputs.documentClass.value = preset.document_class;
+            this.configInputs.geometry.value = preset.geometry;
+            this.configInputs.fontsize.value = preset.fontsize;
+            this.configInputs.mainfont.value = preset.mainfont || '';
+            this.configInputs.linestretch.value = preset.linestretch || '';
+            this.configInputs.colorlinks.checked = preset.colorlinks;
+            this.configInputs.numberSections.checked = preset.number_sections;
+            this.configInputs.toc.checked = preset.toc;
+
+            // Update language settings
+            const language = preset.language || '';
+            this.configInputs.languageZh.checked = language === 'zh';
+            this.configInputs.languageJa.checked = language === 'ja';
+            this.configInputs.languageKo.checked = language === 'ko';
+
+            // Update CJK fonts group visibility
+            this.updateCJKFontsVisibility();
+
+            // Update CJK font overrides
+            this.configInputs.cjkMainfont.value = preset.cjk_mainfont || '';
+            this.configInputs.cjkSansfont.value = preset.cjk_sansfont || '';
+            this.configInputs.cjkMonofont.value = preset.cjk_monofont || '';
             return;
         }
 
-        const preset = this.presets[presetId];
+        // Check hardcoded presets
+        if (MarkdownToPDFConverter.PRESETS[presetId]) {
+            this.applyHardcodedPreset(presetId);
+            return;
+        }
+
+        console.warn(`Preset ${presetId} not found`);
+    }
+
+    applyHardcodedPreset(presetId) {
+        const preset = MarkdownToPDFConverter.PRESETS[presetId];
         this.currentPreset = presetId;
+        this.presetsSelect.value = presetId;
 
-        // Update form inputs
-        this.configInputs.pdfEngine.value = preset.pdf_engine;
-        this.configInputs.documentClass.value = preset.document_class;
-        this.configInputs.geometry.value = preset.geometry;
-        this.configInputs.fontsize.value = preset.fontsize;
-        this.configInputs.mainfont.value = preset.mainfont || '';
-        this.configInputs.linestretch.value = preset.linestretch || '';
-        this.configInputs.colorlinks.checked = preset.colorlinks;
-        this.configInputs.numberSections.checked = preset.number_sections;
-        this.configInputs.toc.checked = preset.toc;
-
-        // Update language settings
-        const language = preset.language || '';
-        this.configInputs.languageZh.checked = language === 'zh';
-        this.configInputs.languageJa.checked = language === 'ja';
-        this.configInputs.languageKo.checked = language === 'ko';
+        // Apply each configuration value from preset
+        Object.entries(preset).forEach(([key, value]) => {
+            switch (key) {
+                case 'document-class':
+                    this.configInputs.documentClass.value = value;
+                    break;
+                case 'fontsize':
+                    this.configInputs.fontsize.value = value;
+                    break;
+                case 'geometry':
+                    this.configInputs.geometry.value = value;
+                    break;
+                case 'linestretch':
+                    this.configInputs.linestretch.value = value;
+                    break;
+                case 'colorlinks':
+                    this.configInputs.colorlinks.checked = value;
+                    break;
+                case 'number-sections':
+                    this.configInputs.numberSections.checked = value;
+                    break;
+                case 'toc':
+                    this.configInputs.toc.checked = value;
+                    break;
+                case 'language':
+                    // Set the appropriate language checkbox
+                    this.configInputs.languageZh.checked = value === 'zh';
+                    this.configInputs.languageJa.checked = value === 'ja';
+                    this.configInputs.languageKo.checked = value === 'ko';
+                    break;
+                default:
+                    console.warn(`Unknown preset key: ${key}`);
+            }
+        });
 
         // Update CJK fonts group visibility
         this.updateCJKFontsVisibility();
-
-        // Update CJK font overrides
-        this.configInputs.cjkMainfont.value = preset.cjk_mainfont || '';
-        this.configInputs.cjkSansfont.value = preset.cjk_sansfont || '';
-        this.configInputs.cjkMonofont.value = preset.cjk_monofont || '';
-
     }
 
     resetConfiguration() {
@@ -690,6 +971,64 @@ $$
         this.resultArea.classList.add('hidden');
     }
 
+    showVisibleError(message) {
+        // Create a temporary visible error message at top of page
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f72585;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+            font-size: 14px;
+            max-width: 80%;
+            text-align: center;
+        `;
+        errorDiv.textContent = `Debug: ${message}`;
+        document.body.appendChild(errorDiv);
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 10000);
+    }
+
+    showVisibleSuccess(message) {
+        // Create a temporary success message at top of page
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4cc9f0;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+            font-size: 14px;
+            max-width: 80%;
+            text-align: center;
+        `;
+        successDiv.textContent = `✓ ${message}`;
+        document.body.appendChild(successDiv);
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (successDiv.parentNode) {
+                successDiv.parentNode.removeChild(successDiv);
+            }
+        }, 5000);
+    }
+
     hideError() {
         this.errorArea.classList.add('hidden');
     }
@@ -748,7 +1087,28 @@ $$
     }
 }
 
+// Test function for debugging modal
+window.testModal = function() {
+    console.log('Testing modal...');
+    const btn = document.getElementById('open-modal-stats');
+    if (btn) {
+        console.log('Found button, clicking...');
+        btn.click();
+    } else {
+        console.error('Button not found');
+    }
+};
+
+// Auto-test modal if debug parameter present
+if (window.location.search.includes('debug=modal')) {
+    setTimeout(() => {
+        console.log('Auto-testing modal due to debug parameter');
+        window.testModal();
+    }, 3000);
+}
+
 // Initialize converter when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded - initializing MarkdownToPDFConverter');
     new MarkdownToPDFConverter();
 });
