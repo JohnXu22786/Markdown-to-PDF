@@ -60,7 +60,6 @@ class MarkdownToPDFConverter {
 
             // Configuration elements
             this.configStatsBtn = document.getElementById('config-stats-btn');
-            this.configActionBtn = document.getElementById('config-action-btn');
             this.configuration = document.getElementById('configuration');
             this.closeConfigBtn = document.getElementById('close-config-btn');
             this.cancelConfigBtn = document.getElementById('cancel-config-btn');
@@ -517,7 +516,7 @@ $$
         try {
 
             // Check for required elements
-            if (!this.configStatsBtn || !this.configActionBtn || !this.configuration) {
+            if (!this.configStatsBtn || !this.configuration) {
                 console.error('Configuration setup failed: missing required DOM elements');
                 // Show visible error
                 return;
@@ -562,7 +561,6 @@ $$
         };
 
         safeAddEventListener(this.configStatsBtn, 'click', openConfiguration);
-        safeAddEventListener(this.configActionBtn, 'click', openConfiguration);
 
         // Close configuration
         const closeConfiguration = () => {
