@@ -77,7 +77,7 @@ print('Code block')
 ```"></textarea>
             <div class="text-stats">
                 <span id="combined-stats" class="stats-info">0 characters, 0 lines</span>
-                <button class="btn btn-sm btn-secondary" id="open-modal-stats" onclick="console.log('open-modal-stats clicked'); alert('open-modal-stats clicked');">
+                <button class="btn btn-sm btn-secondary" id="config-stats-btn">
                     <i class="fas fa-cog"></i> Configuration Options
                 </button>
             </div>
@@ -86,7 +86,7 @@ print('Code block')
 
     <!-- Action buttons -->
     <div class="action-buttons">
-        <button class="btn btn-secondary" id="open-modal-action" onclick="console.log('open-modal-action clicked'); alert('open-modal-action clicked');">
+        <button class="btn btn-secondary" id="config-action-btn">
             <i class="fas fa-cog"></i> Configuration Options
         </button>
         <button class="btn btn-primary" id="convert-btn">
@@ -117,12 +117,12 @@ print('Code block')
     </div>
 
 
-    <!-- Configuration Modal -->
-    <div id="config-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true" tabindex="-1">
+    <!-- Configuration Panel -->
+    <div id="configuration" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="config-title" aria-hidden="true" tabindex="-1">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title"><i class="fas fa-cog"></i> PDF Configuration Options</h3>
-                <button class="btn-icon small" id="close-modal">
+                <h3 id="config-title"><i class="fas fa-cog"></i> PDF Configuration Options</h3>
+                <button class="btn-icon small" id="close-config-btn">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -244,19 +244,15 @@ print('Code block')
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="reset-all-modal">
+                <button class="btn btn-secondary" id="reset-config">
                     <i class="fas fa-redo"></i> Reset All
                 </button>
-                <button class="btn btn-secondary" id="cancel-modal">Cancel</button>
-                <button class="btn btn-primary" id="save-modal">Save Configuration</button>
+                <button class="btn btn-secondary" id="cancel-config-btn">Cancel</button>
+                <button class="btn btn-primary" id="save-config-btn">Save Configuration</button>
             </div>
         </div>
     </div>
 
-    <!-- Test button for modal debugging -->
-    <div style="text-align: center; margin-top: 20px; padding: 10px; border-top: 1px dashed var(--border-color);">
-        <p style="color: var(--text-secondary); font-size: 0.9rem;">Debug: <button onclick="document.getElementById('config-modal').classList.toggle('hidden'); console.log('Modal toggled'); alert('Modal toggled');">Toggle Modal Directly</button></p>
-    </div>
 
     <!-- Error Area -->
     <div id="error-area" class="error-area hidden">

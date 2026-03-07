@@ -2,7 +2,6 @@
  * Main application logic for Markdown to PDF Converter
  * Handles file upload, text input, configuration, and API calls
  */
-console.log('main.js loading');
 window.addEventListener('error', function(e) {
     console.error('Global error caught:', e.error);
 });
@@ -59,17 +58,16 @@ class MarkdownToPDFConverter {
             // Additional DOM elements
             this.cjkFontsGroup = document.getElementById('cjk-fonts-group');
 
-            // Modal elements
-            this.openModalStatsBtn = document.getElementById('open-modal-stats');
-            this.openModalActionBtn = document.getElementById('open-modal-action');
-            this.modal = document.getElementById('config-modal');
-            this.closeModalBtn = document.getElementById('close-modal');
-            this.cancelModalBtn = document.getElementById('cancel-modal');
-            this.saveModalBtn = document.getElementById('save-modal');
-            this.resetAllModalBtn = document.getElementById('reset-all-modal');
-            this.modalTitle = document.getElementById('modal-title');
+            // Configuration elements
+            this.configStatsBtn = document.getElementById('config-stats-btn');
+            this.configActionBtn = document.getElementById('config-action-btn');
+            this.configuration = document.getElementById('configuration');
+            this.closeConfigBtn = document.getElementById('close-config-btn');
+            this.cancelConfigBtn = document.getElementById('cancel-config-btn');
+            this.saveConfigBtn = document.getElementById('save-config-btn');
+            this.configTitle = document.getElementById('config-title');
 
-            // Modal state
+            // Configuration state
             this.previousFocusElement = null;
             this.debouncedUpdateTextStats = MarkdownToPDFConverter.debounce(() => this.updateTextStats(), 300);
 
@@ -80,7 +78,6 @@ class MarkdownToPDFConverter {
             this.currentRequestId = null;
             this.currentOutputFilename = null;
 
-            console.log('MarkdownToPDFConverter constructor called');
             this.init();
         } catch (error) {
             console.error('Error in MarkdownToPDFConverter constructor:', error);
@@ -100,7 +97,7 @@ class MarkdownToPDFConverter {
         };
     }
 
-    // Hardcoded presets for modal
+    // Hardcoded presets for configuration
     static PRESETS = {
         academic: {
             'document-class': 'article',
@@ -140,7 +137,6 @@ class MarkdownToPDFConverter {
     };
 
     init() {
-        console.log('MarkdownToPDFConverter init() called');
         // Tab switching
         this.setupTabs();
 
@@ -156,8 +152,8 @@ class MarkdownToPDFConverter {
         // Language handling
         this.setupLanguageHandling();
 
-        // Modal handling
-        this.setupModal();
+        // Configuration handling
+        this.setupConfigurationDialog();
 
         // Event listeners for buttons
         this.setupEventListeners();
@@ -517,116 +513,98 @@ $$
         this.cjkFontsGroup.style.display = anyChecked ? 'block' : 'none';
     }
 
-    setupModal() {
+    setupConfigurationDialog() {
         try {
-            console.log('Setting up modal...');
-            console.log('openModalStatsBtn:', this.openModalStatsBtn);
-            console.log('openModalActionBtn:', this.openModalActionBtn);
-            console.log('modal:', this.modal);
-            console.log('closeModalBtn:', this.closeModalBtn);
-            console.log('cancelModalBtn:', this.cancelModalBtn);
-            console.log('saveModalBtn:', this.saveModalBtn);
-            console.log('resetAllModalBtn:', this.resetAllModalBtn);
 
             // Check for required elements
-            if (!this.openModalStatsBtn || !this.openModalActionBtn || !this.modal) {
-                console.error('Modal setup failed: missing required DOM elements');
+            if (!this.configStatsBtn || !this.configActionBtn || !this.configuration) {
+                console.error('Configuration setup failed: missing required DOM elements');
                 // Show visible error
-                this.showVisibleError('Modal setup failed: missing required DOM elements. Check browser console.');
                 return;
             }
 
-            // Check for modal control elements
-            if (!this.closeModalBtn) {
-                console.warn('closeModalBtn not found');
+            // Check for configuration control elements
+            if (!this.closeConfigBtn) {
+                console.warn('closeConfigBtn not found');
             }
-            if (!this.cancelModalBtn) {
-                console.warn('cancelModalBtn not found');
+            if (!this.cancelConfigBtn) {
+                console.warn('cancelConfigBtn not found');
             }
-            if (!this.saveModalBtn) {
-                console.warn('saveModalBtn not found');
+            if (!this.saveConfigBtn) {
+                console.warn('saveConfigBtn not found');
             }
-            if (!this.resetAllModalBtn) {
-                console.warn('resetAllModalBtn not found');
+            if (!this.resetConfigBtn) {
+                console.warn('resetConfigBtn not found');
             }
 
         // Track previously focused element for accessibility
         this.previousFocusElement = null;
 
-        // Open modal from both buttons
-        const openModal = () => {
-            console.log('Opening modal, closeModalBtn:', this.closeModalBtn);
-            console.log('Modal classList before:', this.modal.classList);
-            alert('Modal opened - debugging'); // Temporary debug
-            this.modal.classList.remove('hidden');
-            console.log('Modal classList after:', this.modal.classList);
-            this.modal.setAttribute('aria-hidden', 'false');
+        // Open configuration from both buttons
+        const openConfiguration = () => {
+            this.configuration.classList.remove('hidden');
+            this.configuration.setAttribute('aria-hidden', 'false');
             this.previousFocusElement = document.activeElement;
-            if (this.closeModalBtn) {
-                this.closeModalBtn.focus();
-                console.log('Focused close button');
+            if (this.closeConfigBtn) {
+                this.closeConfigBtn.focus();
             } else {
-                console.error('Cannot focus closeModalBtn: element not found');
+                console.error('Cannot focus closeConfigBtn: element not found');
             }
-            // Additional debug: check computed display style
-            const display = window.getComputedStyle(this.modal).display;
-            console.log('Modal computed display:', display);
         };
 
         // Safe event listener helper
         const safeAddEventListener = (element, event, handler) => {
             if (element) {
-                console.log(`Adding ${event} listener to`, element.id || element);
                 element.addEventListener(event, handler);
             } else {
                 console.warn(`Cannot add ${event} listener to missing element`);
             }
         };
 
-        safeAddEventListener(this.openModalStatsBtn, 'click', openModal);
-        safeAddEventListener(this.openModalActionBtn, 'click', openModal);
+        safeAddEventListener(this.configStatsBtn, 'click', openConfiguration);
+        safeAddEventListener(this.configActionBtn, 'click', openConfiguration);
 
-        // Close modal
-        const closeModal = () => {
-            this.modal.classList.add('hidden');
-            this.modal.setAttribute('aria-hidden', 'true');
+        // Close configuration
+        const closeConfiguration = () => {
+            this.configuration.classList.add('hidden');
+            this.configuration.setAttribute('aria-hidden', 'true');
             if (this.previousFocusElement) {
                 this.previousFocusElement.focus();
             }
         };
 
-        safeAddEventListener(this.closeModalBtn, 'click', closeModal);
-        safeAddEventListener(this.cancelModalBtn, 'click', closeModal);
+        safeAddEventListener(this.closeConfigBtn, 'click', closeConfiguration);
+        safeAddEventListener(this.cancelConfigBtn, 'click', closeConfiguration);
 
-        // Save modal (just close for now, configuration is already saved to state)
-        safeAddEventListener(this.saveModalBtn, 'click', () => {
-            closeModal();
+        // Save configuration (just close for now, configuration is already saved to state)
+        safeAddEventListener(this.saveConfigBtn, 'click', () => {
+            closeConfiguration();
             // Optional: Show confirmation or update UI
         });
 
-        // Close modal when clicking outside
-        safeAddEventListener(this.modal, 'click', (e) => {
-            if (e.target === this.modal) {
-                closeModal();
+        // Close configuration when clicking outside
+        safeAddEventListener(this.configuration, 'click', (e) => {
+            if (e.target === this.configuration) {
+                closeConfiguration();
             }
         });
 
-        // Close modal with Escape key
+        // Close configuration with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
-                closeModal();
+            if (e.key === 'Escape' && !this.configuration.classList.contains('hidden')) {
+                closeConfiguration();
             }
         });
 
         // Language support - show CJK fonts when any CJK language is selected
         // This is already handled by setupLanguageHandling(), but we need to ensure
-        // the event delegation works for modal checkboxes
+        // the event delegation works for configuration checkboxes
         const languageCheckboxes = document.querySelectorAll('input[name="language"]');
-        const modalBody = document.querySelector('.modal-body');
+        const configBody = document.querySelector('.modal-body');
 
-        // Event delegation for language checkboxes in modal
-        if (modalBody) {
-            modalBody.addEventListener('change', (e) => {
+        // Event delegation for language checkboxes in configuration
+        if (configBody) {
+            configBody.addEventListener('change', (e) => {
                 if (e.target.matches('input[name="language"]')) {
                     const anyChecked = Array.from(languageCheckboxes).some(cb => cb.checked);
                     this.cjkFontsGroup.style.display = anyChecked ? 'block' : 'none';
@@ -636,13 +614,13 @@ $$
 
         // Preset selection - handled by setupConfiguration() via this.presetsSelect
 
-        // Reset all button in modal
-        safeAddEventListener(this.resetAllModalBtn, 'click', () => {
+        // Reset all button in configuration
+        safeAddEventListener(this.resetConfigBtn, 'click', () => {
             // Reset text area
             this.markdownText.value = '';
             this.updateTextStats();
 
-            // Reset modal settings
+            // Reset configuration settings
             this.presetsSelect.value = '';
             this.configInputs.pdfEngine.value = 'xelatex';
             this.configInputs.documentClass.value = 'article';
@@ -659,14 +637,10 @@ $$
             this.cjkFontsGroup.style.display = 'none';
 
             // Optional: Show confirmation
-            console.log('All settings reset');
         });
 
-        console.log('Modal setup complete');
-        // Show temporary success message
-        this.showVisibleSuccess('Modal system ready. Click "Configuration Options" to open modal.');
         } catch (error) {
-            console.error('Error in setupModal:', error);
+            console.error('Error in setupConfigurationDialog:', error);
         }
     }
 
@@ -971,63 +945,7 @@ $$
         this.resultArea.classList.add('hidden');
     }
 
-    showVisibleError(message) {
-        // Create a temporary visible error message at top of page
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #f72585;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-family: sans-serif;
-            font-size: 14px;
-            max-width: 80%;
-            text-align: center;
-        `;
-        errorDiv.textContent = `Debug: ${message}`;
-        document.body.appendChild(errorDiv);
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (errorDiv.parentNode) {
-                errorDiv.parentNode.removeChild(errorDiv);
-            }
-        }, 10000);
-    }
 
-    showVisibleSuccess(message) {
-        // Create a temporary success message at top of page
-        const successDiv = document.createElement('div');
-        successDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4cc9f0;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-family: sans-serif;
-            font-size: 14px;
-            max-width: 80%;
-            text-align: center;
-        `;
-        successDiv.textContent = `✓ ${message}`;
-        document.body.appendChild(successDiv);
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            if (successDiv.parentNode) {
-                successDiv.parentNode.removeChild(successDiv);
-            }
-        }, 5000);
-    }
 
     hideError() {
         this.errorArea.classList.add('hidden');
@@ -1087,28 +1005,7 @@ $$
     }
 }
 
-// Test function for debugging modal
-window.testModal = function() {
-    console.log('Testing modal...');
-    const btn = document.getElementById('open-modal-stats');
-    if (btn) {
-        console.log('Found button, clicking...');
-        btn.click();
-    } else {
-        console.error('Button not found');
-    }
-};
-
-// Auto-test modal if debug parameter present
-if (window.location.search.includes('debug=modal')) {
-    setTimeout(() => {
-        console.log('Auto-testing modal due to debug parameter');
-        window.testModal();
-    }, 3000);
-}
-
 // Initialize converter when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOMContentLoaded - initializing MarkdownToPDFConverter');
     new MarkdownToPDFConverter();
 });
