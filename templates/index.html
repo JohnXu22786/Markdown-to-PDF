@@ -76,192 +76,217 @@
 print('Code block')
 ```"></textarea>
             <div class="text-stats">
-                <span id="char-count">0 characters</span>
-                <span id="line-count">0 lines</span>
+                <span id="combined-stats" class="stats-info">0 characters, 0 lines</span>
+                <button class="btn btn-sm btn-secondary" id="config-stats-btn">
+                    <i class="fas fa-cog"></i> PDF Output Options
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Configuration Options -->
-    <div class="configuration">
-        <h3><i class="fas fa-sliders-h"></i> PDF Configuration</h3>
-
-        <div class="config-grid">
-            <!-- Left column -->
-            <div class="config-column">
-                <div class="form-group">
-                    <label for="presets">
-                        <i class="fas fa-prescription-bottle"></i> Quick Presets
-                    </label>
-                    <select id="presets" class="form-select">
-                        <option value="">Custom</option>
-                        <option value="academic">Academic Paper</option>
-                        <option value="simple">Simple Document</option>
-                        <option value="book">Book Style</option>
-                        <option value="chinese">Chinese Document</option>
-                        <option value="japanese">Japanese Document</option>
-                        <option value="korean">Korean Document</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="pdf-engine">
-                        <i class="fas fa-cogs"></i> PDF Engine
-                    </label>
-                    <select id="pdf-engine" class="form-select">
-                        <option value="xelatex" selected>XeLaTeX (recommended)</option>
-                        <option value="lualatex">LuaLaTeX</option>
-                        <option value="pdflatex">PDFLaTeX</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="document-class">
-                        <i class="fas fa-file-alt"></i> Document Class
-                    </label>
-                    <select id="document-class" class="form-select">
-                        <option value="article" selected>Article</option>
-                        <option value="report">Report</option>
-                        <option value="book">Book</option>
-                        <option value="memoir">Memoir</option>
-                        <option value="scrartcl">KOMA Article</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="geometry">
-                        <i class="fas fa-border-all"></i> Page Geometry
-                    </label>
-                    <input type="text" id="geometry" class="form-input" value="margin=1in" placeholder="e.g., margin=1in">
-                    <small class="form-help">Examples: a4paper,margin=2.5cm, left=1in,right=1in</small>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="linestretch">
-                        <i class="fas fa-arrows-alt-v"></i> Line Stretch
-                    </label>
-                    <input type="text" id="linestretch" class="form-input" placeholder="e.g., 1.25">
-                    <small class="form-help">Line spacing multiplier</small>
-                </div>
-            </div>
-
-            <!-- Right column -->
-            <div class="config-column">
-                <div class="form-group">
-                    <label for="mainfont">
-                        <i class="fas fa-font"></i> Main Font
-                    </label>
-                    <input type="text" id="mainfont" class="form-input" placeholder="e.g., Times New Roman">
-                    <small class="form-help">Leave empty for default LaTeX font</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="fontsize">
-                        <i class="fas fa-text-height"></i> Font Size
-                    </label>
-                    <select id="fontsize" class="form-select">
-                        <option value="10pt">10pt</option>
-                        <option value="11pt">11pt</option>
-                        <option value="12pt" selected>12pt</option>
-                        <option value="14pt">14pt</option>
-                    </select>
-                </div>
-
-                <div class="checkbox-group">
-                    <label class="checkbox">
-                        <input type="checkbox" id="colorlinks" checked>
-                        <span class="checkmark"></span>
-                        <i class="fas fa-palette"></i> Color Links
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" id="number-sections">
-                        <span class="checkmark"></span>
-                        <i class="fas fa-list-ol"></i> Number Sections
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" id="toc">
-                        <span class="checkmark"></span>
-                        <i class="fas fa-list"></i> Table of Contents
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-language"></i> Formats for special languages</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox">
-                            <input type="checkbox" id="language-zh" name="language" value="zh">
-                            <span class="checkmark"></span>
-                            Chinese
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" id="language-ja" name="language" value="ja">
-                            <span class="checkmark"></span>
-                            Japanese
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" id="language-ko" name="language" value="ko">
-                            <span class="checkmark"></span>
-                            Korean
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group" id="cjk-fonts-group" style="display: none;">
-                    <label><i class="fas fa-font"></i> CJK Font Overrides</label>
-                    <input type="text" id="cjk-mainfont" class="form-input" placeholder="CJK main font (e.g., SimSun)">
-                    <input type="text" id="cjk-sansfont" class="form-input" placeholder="CJK sans font">
-                    <input type="text" id="cjk-monofont" class="form-input" placeholder="CJK mono font">
-                    <br>
-                    <small class="form-help">Leave empty for language-specific defaults</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Action Buttons -->
+    <!-- Action buttons and result area -->
     <div class="action-buttons">
-        <button class="btn btn-secondary" id="reset-config">
-            <i class="fas fa-redo"></i> Reset to Defaults
-        </button>
-        <button class="btn btn-primary" id="convert-btn">
-            <i class="fas fa-file-pdf"></i> Convert to PDF
-        </button>
-    </div>
-
-    <!-- Result Area -->
-    <div id="result-area" class="result-area hidden">
-        <div class="result-card">
+        <!-- Success message (hidden by default) -->
+        <div id="result-area" class="result-area hidden">
             <div class="result-header">
                 <i class="fas fa-check-circle success"></i>
                 <h4>Conversion Successful!</h4>
             </div>
-            <p>Your PDF is ready for download.</p>
-            <div class="result-actions">
+        </div>
+
+        <!-- Error message (hidden by default) -->
+        <div id="error-area" class="error-area hidden">
+            <div class="error-header">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle error"></i>
+                    <h4>Conversion Failed</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons group (always right-aligned) -->
+        <div class="action-buttons-group">
+            <!-- Download and Open buttons (hidden by default) -->
+            <div class="result-actions hidden" id="result-actions">
                 <a id="download-link" class="btn btn-success" href="#" target="_blank">
-                    <i class="fas fa-download"></i> Download PDF
+                    <i class="fas fa-download"></i> Download
                 </a>
                 <button id="open-link" class="btn btn-info">
-                    <i class="fas fa-external-link-alt"></i> Open Directly
+                    <i class="fas fa-external-link-alt"></i> Open
                 </button>
-                <button class="btn" id="new-conversion">
-                    <i class="fas fa-plus"></i> New Conversion
+            </div>
+            <!-- Error action buttons (hidden by default) -->
+            <div class="error-actions hidden" id="error-actions">
+                <button class="btn btn-secondary" id="error-detail-btn">
+                    <i class="fas fa-info-circle"></i> Detail
                 </button>
+                <button class="btn btn-error" id="dismiss-error">
+                    <i class="fas fa-times"></i> Dismiss
+                </button>
+            </div>
+            <!-- Convert button -->
+            <button class="btn btn-primary" id="convert-btn">
+                <i class="fas fa-file-pdf"></i> Convert to PDF
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Configuration Panel -->
+    <div id="configuration" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="config-title" aria-hidden="true" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="config-title"><i class="fas fa-cog"></i> PDF Output Options</h3>
+                <button class="btn-icon small" id="close-config-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="config-grid">
+                    <!-- Left column -->
+                    <div class="config-column">
+                        <div class="form-group">
+                            <label for="presets"><i class="fas fa-prescription-bottle"></i> Quick Presets</label>
+                            <select id="presets" class="form-select">
+                                <option value="">Custom</option>
+                                <option value="academic">Academic Paper</option>
+                                <option value="simple">Simple Document</option>
+                                <option value="book">Book Style</option>
+                                <option value="chinese">Chinese Document</option>
+                                <option value="japanese">Japanese Document</option>
+                                <option value="korean">Korean Document</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pdf-engine"><i class="fas fa-cogs"></i> PDF Engine</label>
+                            <select id="pdf-engine" class="form-select">
+                                <option value="xelatex" selected>XeLaTeX (recommended)</option>
+                                <option value="lualatex">LuaLaTeX</option>
+                                <option value="pdflatex">PDFLaTeX</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="document-class"><i class="fas fa-file-alt"></i> Document Class</label>
+                            <select id="document-class" class="form-select">
+                                <option value="article" selected>Article</option>
+                                <option value="report">Report</option>
+                                <option value="book">Book</option>
+                                <option value="memoir">Memoir</option>
+                                <option value="scrartcl">KOMA Article</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="geometry"><i class="fas fa-border-all"></i> Page Geometry</label>
+                            <input type="text" id="geometry" class="form-input" value="margin=1in" placeholder="e.g., margin=1in">
+                            <small class="form-help">Examples: a4paper,margin=2.5cm, left=1in,right=1in</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="linestretch"><i class="fas fa-arrows-alt-v"></i> Line Stretch</label>
+                            <input type="text" id="linestretch" class="form-input" placeholder="e.g., 1.25">
+                            <small class="form-help">Line spacing multiplier</small>
+                        </div>
+                    </div>
+
+                    <!-- Right column -->
+                    <div class="config-column">
+                        <div class="form-group">
+                            <label for="mainfont"><i class="fas fa-font"></i> Main Font</label>
+                            <input type="text" id="mainfont" class="form-input" placeholder="e.g., Times New Roman">
+                            <small class="form-help">Leave empty for default LaTeX font</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fontsize"><i class="fas fa-text-height"></i> Font Size</label>
+                            <select id="fontsize" class="form-select">
+                                <option value="10pt">10pt</option>
+                                <option value="11pt">11pt</option>
+                                <option value="12pt" selected>12pt</option>
+                                <option value="14pt">14pt</option>
+                            </select>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="colorlinks" checked>
+                                <span class="checkmark"></span>
+                                <i class="fas fa-palette"></i> Color Links
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="number-sections">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-list-ol"></i> Number Sections
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="toc">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-list"></i> Table of Contents
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-language"></i> Language Support</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="language-zh" name="language">
+                                    <span class="checkmark"></span>
+                                    Chinese
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="language-ja" name="language">
+                                    <span class="checkmark"></span>
+                                    Japanese
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="language-ko" name="language">
+                                    <span class="checkmark"></span>
+                                    Korean
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="cjk-fonts-group" style="display: none;">
+                            <label><i class="fas fa-font"></i> CJK Font Overrides</label>
+                            <input type="text" id="cjk-mainfont" class="form-input" placeholder="CJK main font (e.g., SimSun)">
+                            <input type="text" id="cjk-sansfont" class="form-input" placeholder="CJK sans font">
+                            <input type="text" id="cjk-monofont" class="form-input" placeholder="CJK mono font">
+                            <small class="form-help">Leave empty for language-specific defaults</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="reset-config">
+                    <i class="fas fa-redo"></i> Reset All
+                </button>
+                <button class="btn btn-secondary" id="cancel-config-btn">Cancel</button>
+                <button class="btn btn-primary" id="save-config-btn">Save Configuration</button>
             </div>
         </div>
     </div>
 
-    <!-- Error Area -->
-    <div id="error-area" class="error-area hidden">
-        <div class="error-card">
-            <div class="error-header">
-                <i class="fas fa-exclamation-circle error"></i>
-                <h4>Conversion Failed</h4>
+
+
+    <!-- Error Detail Modal -->
+    <div id="error-detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="error-detail-title" aria-hidden="true" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="error-detail-title"><i class="fas fa-exclamation-circle error"></i> Conversion Error Details</h3>
+                <button class="btn-icon small" id="close-error-detail-btn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <p id="error-message">An error occurred during conversion.</p>
-            <button class="btn btn-error" id="dismiss-error">
-                <i class="fas fa-times"></i> Dismiss
-            </button>
+            <div class="modal-body">
+                <div class="error-detail-content">
+                    <p id="error-detail-message">An error occurred during conversion.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-error-detail-modal-btn">Close</button>
+            </div>
         </div>
     </div>
 
