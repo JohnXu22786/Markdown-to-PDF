@@ -447,17 +447,9 @@ body {
     border: none;
     resize: vertical;
     outline: none;
+    vertical-align: top;
 }
 
-.text-stats {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--bg-tertiary);
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
 
 /* Configuration */
 .configuration {
@@ -836,13 +828,11 @@ body {
 .text-stats {
     padding: var(--spacing-sm);
     background: var(--bg-tertiary);
-    border-radius: var(--border-radius-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: var(--text-secondary);
     font-size: 0.85rem;
-    margin-bottom: var(--spacing-lg);
 }
 
 /* Result divider */
