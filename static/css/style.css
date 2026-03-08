@@ -163,12 +163,12 @@ body {
 /* Main Content */
 .main-content {
     flex: 1;
-    padding: 0 0 var(--spacing-md) 0;
+    padding: 0 0 0 0;
 }
 
 /* Footer */
 .footer {
-    margin-top: var(--spacing-xl);
+    margin-top: var(--spacing-sm);
     padding: var(--spacing-lg) 0;
     border-top: 1px solid var(--border-color);
     text-align: center;
