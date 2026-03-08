@@ -629,18 +629,18 @@ body {
 .error-header h4 {
     color: var(--text-primary);
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.5rem;
     text-align: left;
 }
 
 .success {
     color: var(--color-success);
-    font-size: 1.2rem;
+    font-size: 1.8rem;
 }
 
 .error {
     color: var(--color-error);
-    font-size: 1.2rem;
+    font-size: 1.8rem;
 }
 
 .result-actions {
