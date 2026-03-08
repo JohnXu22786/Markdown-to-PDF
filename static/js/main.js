@@ -30,10 +30,16 @@ class MarkdownToPDFConverter {
             this.presetsSelect = document.getElementById('presets');
             this.resultArea = document.getElementById('result-area');
             this.resultActions = document.getElementById('result-actions');
+            this.errorActions = document.getElementById('error-actions');
             this.errorArea = document.getElementById('error-area');
             this.downloadLink = document.getElementById('download-link');
             this.openLink = document.getElementById('open-link');
             this.dismissErrorBtn = document.getElementById('dismiss-error');
+            this.errorDetailBtn = document.getElementById('error-detail-btn');
+            this.errorDetailModal = document.getElementById('error-detail-modal');
+            this.errorDetailMessage = document.getElementById('error-detail-message');
+            this.closeErrorDetailBtn = document.getElementById('close-error-detail-btn');
+            this.closeErrorDetailModalBtn = document.getElementById('close-error-detail-modal-btn');
             this.loadingOverlay = document.getElementById('loading-overlay');
             this.cancelConversionBtn = document.getElementById('cancel-conversion');
 
@@ -154,6 +160,9 @@ class MarkdownToPDFConverter {
 
         // Configuration handling
         this.setupConfigurationDialog();
+
+        // Error detail dialog
+        this.setupErrorDetailDialog();
 
         // Event listeners for buttons
         this.setupEventListeners();
@@ -643,6 +652,71 @@ $$
         }
     }
 
+    setupErrorDetailDialog() {
+        try {
+            // Check for required elements
+            if (!this.errorDetailBtn || !this.errorDetailModal) {
+                console.error('Error detail dialog setup failed: missing required DOM elements');
+                return;
+            }
+
+            // Safe event listener helper
+            const safeAddEventListener = (element, event, handler) => {
+                if (element) {
+                    element.addEventListener(event, handler);
+                } else {
+                    console.warn(`Cannot add ${event} listener to missing element`);
+                }
+            };
+
+            // Track previously focused element for accessibility
+            let previousFocusElement = null;
+
+            // Open error detail modal
+            const openErrorDetailModal = () => {
+                this.errorDetailModal.classList.remove('hidden');
+                this.errorDetailModal.setAttribute('aria-hidden', 'false');
+                previousFocusElement = document.activeElement;
+                if (this.closeErrorDetailBtn) {
+                    this.closeErrorDetailBtn.focus();
+                }
+            };
+
+            // Close error detail modal
+            const closeErrorDetailModal = () => {
+                this.errorDetailModal.classList.add('hidden');
+                this.errorDetailModal.setAttribute('aria-hidden', 'true');
+                if (previousFocusElement) {
+                    previousFocusElement.focus();
+                }
+            };
+
+            // Open when detail button is clicked
+            safeAddEventListener(this.errorDetailBtn, 'click', openErrorDetailModal);
+
+            // Close buttons
+            safeAddEventListener(this.closeErrorDetailBtn, 'click', closeErrorDetailModal);
+            safeAddEventListener(this.closeErrorDetailModalBtn, 'click', closeErrorDetailModal);
+
+            // Close when clicking outside modal
+            safeAddEventListener(this.errorDetailModal, 'click', (e) => {
+                if (e.target === this.errorDetailModal) {
+                    closeErrorDetailModal();
+                }
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !this.errorDetailModal.classList.contains('hidden')) {
+                    closeErrorDetailModal();
+                }
+            });
+
+        } catch (error) {
+            console.error('Error in setupErrorDetailDialog:', error);
+        }
+    }
+
     async loadPresets() {
         try {
             const response = await fetch('/api/config-presets');
@@ -800,6 +874,10 @@ $$
             return;
         }
 
+        // Hide any previous error state
+        this.errorArea.classList.add('hidden');
+        this.errorActions.classList.add('hidden');
+
         // Generate unique request ID for cancellation
         this.currentRequestId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 
@@ -908,6 +986,7 @@ $$
         this.resultArea.classList.remove('hidden');
         this.resultActions.classList.remove('hidden');
         this.errorArea.classList.add('hidden');
+        this.errorActions.classList.add('hidden');
 
         // Extract filename from download URL for open functionality
         // URL format: /download/filename.pdf
@@ -940,21 +1019,27 @@ $$
     }
 
     showError(message) {
-        document.getElementById('error-message').textContent = message;
+        this.errorDetailMessage.textContent = message;
         this.errorArea.classList.remove('hidden');
         this.resultArea.classList.add('hidden');
         this.resultActions.classList.add('hidden');
+        this.errorActions.classList.remove('hidden');
+        // Ensure error detail modal is closed initially
+        this.errorDetailModal.classList.add('hidden');
+        this.errorDetailModal.setAttribute('aria-hidden', 'true');
     }
 
 
 
     hideError() {
         this.errorArea.classList.add('hidden');
+        this.errorActions.classList.add('hidden');
     }
 
     resetConversion() {
         this.resultArea.classList.add('hidden');
         this.resultActions.classList.add('hidden');
+        this.errorActions.classList.add('hidden');
         this.clearFile();
         this.markdownText.value = '';
         this.updateTextStats();

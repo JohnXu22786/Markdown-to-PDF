@@ -580,9 +580,11 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    margin-left: auto;
 }
 
-#result-area {
+#result-area,
+#error-area {
     display: flex;
     align-items: center;
 }
@@ -593,8 +595,7 @@ body {
     animation: fadeIn 0.5s ease;
 }
 
-.result-card,
-.error-card {
+.result-card {
     padding: var(--spacing-xl);
     border-radius: var(--border-radius);
     text-align: center;
@@ -608,6 +609,20 @@ body {
     align-items: center;
     gap: var(--spacing-sm);
     margin: 0;
+    width: 100%;
+}
+
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.error-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
 .result-header h4,
@@ -615,6 +630,7 @@ body {
     color: var(--text-primary);
     margin: 0;
     font-size: 1rem;
+    text-align: left;
 }
 
 .success {
@@ -633,13 +649,6 @@ body {
     gap: var(--spacing-md);
 }
 
-.error-area {
-    margin-top: var(--spacing-xl);
-}
-
-.error-card {
-    margin-top: var(--spacing-xl);
-}
 
 /* Loading Overlay */
 .loading-overlay {
@@ -732,6 +741,7 @@ body {
         flex-direction: column;
         gap: var(--spacing-md);
         align-items: center;
+        margin-left: 0;
     }
 
     .text-stats {
@@ -742,6 +752,27 @@ body {
 
     .result-actions {
         flex-direction: column;
+    }
+
+    .error-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+
+    .error-header h4 {
+        text-align: center;
+    }
+
+    .error-message {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .error-actions {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        justify-content: center;
     }
 
     .container {

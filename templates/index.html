@@ -93,6 +93,17 @@ print('Code block')
                 <h4>Conversion Successful!</h4>
             </div>
         </div>
+
+        <!-- Error message (hidden by default) -->
+        <div id="error-area" class="error-area hidden">
+            <div class="error-header">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle error"></i>
+                    <h4>Conversion Failed</h4>
+                </div>
+            </div>
+        </div>
+
         <!-- Buttons group (always right-aligned) -->
         <div class="action-buttons-group">
             <!-- Download and Open buttons (hidden by default) -->
@@ -102,6 +113,15 @@ print('Code block')
                 </a>
                 <button id="open-link" class="btn btn-info">
                     <i class="fas fa-external-link-alt"></i> Open
+                </button>
+            </div>
+            <!-- Error action buttons (hidden by default) -->
+            <div class="error-actions hidden" id="error-actions">
+                <button class="btn btn-secondary" id="error-detail-btn">
+                    <i class="fas fa-info-circle"></i> Detail
+                </button>
+                <button class="btn btn-error" id="dismiss-error">
+                    <i class="fas fa-times"></i> Dismiss
                 </button>
             </div>
             <!-- Convert button -->
@@ -249,17 +269,24 @@ print('Code block')
     </div>
 
 
-    <!-- Error Area -->
-    <div id="error-area" class="error-area hidden">
-        <div class="error-card">
-            <div class="error-header">
-                <i class="fas fa-exclamation-circle error"></i>
-                <h4>Conversion Failed</h4>
+
+    <!-- Error Detail Modal -->
+    <div id="error-detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="error-detail-title" aria-hidden="true" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="error-detail-title"><i class="fas fa-exclamation-circle error"></i> Conversion Error Details</h3>
+                <button class="btn-icon small" id="close-error-detail-btn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <p id="error-message">An error occurred during conversion.</p>
-            <button class="btn btn-error" id="dismiss-error">
-                <i class="fas fa-times"></i> Dismiss
-            </button>
+            <div class="modal-body">
+                <div class="error-detail-content">
+                    <p id="error-detail-message">An error occurred during conversion.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-error-detail-modal-btn">Close</button>
+            </div>
         </div>
     </div>
 
