@@ -84,25 +84,19 @@ print('Code block')
         </div>
     </div>
 
-    <!-- Action buttons -->
+    <!-- Action buttons and result area -->
     <div class="action-buttons">
-        <button class="btn btn-primary" id="convert-btn">
-            <i class="fas fa-file-pdf"></i> Convert to PDF
-        </button>
-    </div>
-
-    <!-- Result divider -->
-    <div class="result-divider"></div>
-
-    <!-- Result area (hidden by default) -->
-    <div id="result-area" class="result-area hidden">
-        <div class="result-card">
+        <!-- Success message (hidden by default) -->
+        <div id="result-area" class="result-area hidden">
             <div class="result-header">
                 <i class="fas fa-check-circle success"></i>
                 <h4>Conversion Successful!</h4>
             </div>
-            <p>Your PDF is ready for download.</p>
-            <div class="result-actions">
+        </div>
+        <!-- Buttons group (always right-aligned) -->
+        <div class="action-buttons-group">
+            <!-- Download and Open buttons (hidden by default) -->
+            <div class="result-actions hidden" id="result-actions">
                 <a id="download-link" class="btn btn-success" href="#" target="_blank">
                     <i class="fas fa-download"></i> Download
                 </a>
@@ -110,6 +104,10 @@ print('Code block')
                     <i class="fas fa-external-link-alt"></i> Open
                 </button>
             </div>
+            <!-- Convert button -->
+            <button class="btn btn-primary" id="convert-btn">
+                <i class="fas fa-file-pdf"></i> Convert to PDF
+            </button>
         </div>
     </div>
 

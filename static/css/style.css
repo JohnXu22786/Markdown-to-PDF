@@ -571,16 +571,25 @@ body {
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--border-color);
+}
+
+.action-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+#result-area {
+    display: flex;
+    align-items: center;
 }
 
 /* Result Area */
 .result-area,
 .error-area {
-    margin-top: var(--spacing-xl);
     animation: fadeIn 0.5s ease;
 }
 
@@ -597,31 +606,39 @@ body {
 .error-header {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
+    margin: 0;
 }
 
 .result-header h4,
 .error-header h4 {
     color: var(--text-primary);
+    margin: 0;
+    font-size: 1rem;
 }
 
 .success {
     color: var(--color-success);
-    font-size: 2rem;
+    font-size: 1.2rem;
 }
 
 .error {
     color: var(--color-error);
-    font-size: 2rem;
+    font-size: 1.2rem;
 }
 
 .result-actions {
     display: flex;
+    align-items: center;
     gap: var(--spacing-md);
-    justify-content: center;
-    margin-top: var(--spacing-lg);
+}
+
+.error-area {
+    margin-top: var(--spacing-xl);
+}
+
+.error-card {
+    margin-top: var(--spacing-xl);
 }
 
 /* Loading Overlay */
@@ -702,6 +719,19 @@ body {
     .action-buttons {
         flex-direction: column;
         gap: var(--spacing-md);
+        align-items: stretch;
+    }
+
+    #result-area {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .action-buttons-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: center;
     }
 
     .text-stats {

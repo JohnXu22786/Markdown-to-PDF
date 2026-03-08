@@ -29,6 +29,7 @@ class MarkdownToPDFConverter {
             this.resetConfigBtn = document.getElementById('reset-config');
             this.presetsSelect = document.getElementById('presets');
             this.resultArea = document.getElementById('result-area');
+            this.resultActions = document.getElementById('result-actions');
             this.errorArea = document.getElementById('error-area');
             this.downloadLink = document.getElementById('download-link');
             this.openLink = document.getElementById('open-link');
@@ -905,6 +906,7 @@ $$
     showResult(downloadUrl) {
         this.downloadLink.href = downloadUrl;
         this.resultArea.classList.remove('hidden');
+        this.resultActions.classList.remove('hidden');
         this.errorArea.classList.add('hidden');
 
         // Extract filename from download URL for open functionality
@@ -941,6 +943,7 @@ $$
         document.getElementById('error-message').textContent = message;
         this.errorArea.classList.remove('hidden');
         this.resultArea.classList.add('hidden');
+        this.resultActions.classList.add('hidden');
     }
 
 
@@ -951,6 +954,7 @@ $$
 
     resetConversion() {
         this.resultArea.classList.add('hidden');
+        this.resultActions.classList.add('hidden');
         this.clearFile();
         this.markdownText.value = '';
         this.updateTextStats();
